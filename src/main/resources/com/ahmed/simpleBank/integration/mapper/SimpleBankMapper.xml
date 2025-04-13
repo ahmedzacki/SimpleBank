@@ -8,10 +8,29 @@
 
 <mapper namespace="com.ahmed.simpleBank.integration.mapper.SimpleBankMapper">
 
-    <select id="getUserById" resultType="com.yourdomain.simplebank.model.User">
-        SELECT * FROM users WHERE user_id = #{userId};
+    <!-- Define the resultMap to map snake_case columns to camelCase properties -->
+    <resultMap id="userResultMap" type="com.ahmed.simpleBank.business.User">
+        <result property="userId" column="user_id"/>
+        <result property="firstName" column="first_name"/>
+        <result property="lastName" column="last_name"/>
+        <result property="email" column="email"/>
+        <result property="passwordHash" column="password_hash"/>
+        <result property="role" column="role"/>
+        <result property="createdAt" column="created_at"/>
+    </resultMap>
+
+    <!-- Use the resultMap in the select query -->
+    <select id="getAllUsers" resultMap="userResultMap">
+        SELECT
+            user_id,
+            first_name,
+            last_name,
+            email,
+            password_hash,
+            role,
+            created_at
+        FROM user
     </select>
 
-    <!-- Other SQL statements like INSERT, UPDATE, DELETE, etc. can go here -->
 
 </mapper>
