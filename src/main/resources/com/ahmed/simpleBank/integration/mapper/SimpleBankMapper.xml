@@ -32,5 +32,11 @@
         FROM user
     </select>
 
+    <!-- Insert query to insert a new user -->
+    <insert id="insertUser" parameterType="com.ahmed.simpleBank.business.User">
+        INSERT INTO user (first_name, last_name, email, password_hash, role)
+        VALUES (#{firstName}, #{lastName}, #{email}, #{passwordHash}, #{role});
+    </insert>
+
 
 </mapper>

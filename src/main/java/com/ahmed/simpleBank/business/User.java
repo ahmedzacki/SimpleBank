@@ -13,6 +13,28 @@ public class User {
     private String role;
     private Timestamp createdAt;
 
+    // Constructors
+    public User() {}
+
+    public User(int userId, String firstName, String lastName, String email, String passwordHash, String role) {
+        this.userId = userId;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.email = email;
+        this.passwordHash = passwordHash;
+        this.role = role;
+        this.createdAt = new Timestamp(System.currentTimeMillis());
+    }
+
+    public User(String firstName, String lastName, String email, String passwordHash, String role) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.email = email;
+        this.passwordHash = passwordHash;
+        this.role = role;
+        this.createdAt = new Timestamp(System.currentTimeMillis());
+    }
+
     // Getters and Setters
 
     public int getUserId() {

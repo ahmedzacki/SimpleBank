@@ -20,4 +20,9 @@ public class SimpleBankMyBatisImpl implements SimpleBankDao{
         List<User> res = mapper.getAllUsers();
         return res;
     }
+
+    @Override
+    public void insertUser(User user) {
+        mapper.insertUser(user);
+    }
 }
