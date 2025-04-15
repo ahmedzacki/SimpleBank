@@ -6,7 +6,7 @@
 <!--The namespace defines the location of the Java interface.
     The operation names here must match the method names in the interface -->
 
-<mapper namespace="com.ahmed.simpleBank.integration.mapper.SimpleBankMapper">
+<mapper namespace="com.ahmed.simpleBank.integration.mapper.MyBatisMapper">
 
     <!-- Define the resultMap to map snake_case columns to camelCase properties -->
     <resultMap id="userResultMap" type="com.ahmed.simpleBank.business.User">
@@ -32,11 +32,42 @@
         FROM user
     </select>
 
+    <!-- SQL to get a user by ID -->
+    <select id="getUserById" resultType="com.ahmed.simpleBank.business.User">
+        SELECT
+            user_id,
+            first_name,
+            last_name,
+            email,
+            password_hash,
+            role,
+            created_at
+        FROM user
+        WHERE user_id = #{userId}
+    </select>
+
     <!-- Insert query to insert a new user -->
     <insert id="insertUser" parameterType="com.ahmed.simpleBank.business.User">
         INSERT INTO user (first_name, last_name, email, password_hash, role)
         VALUES (#{firstName}, #{lastName}, #{email}, #{passwordHash}, #{role});
     </insert>
+
+    <!-- SQL to update a user -->
+    <update id="updateUser" parameterType="com.ahmed.simpleBank.business.User">
+        UPDATE user
+        SET first_name = #{firstName},
+            last_name = #{lastName},
+            email = #{email},
+            password_hash = #{passwordHash},
+            role = #{role},
+            created_at = #{createdAt}
+        WHERE user_id = #{userId}
+    </update>
+
+    <!-- SQL to delete a user -->
+    <delete id="deleteUser" parameterType="int">
+        DELETE FROM user WHERE user_id = #{userId}
+    </delete>
 
 
 </mapper>

@@ -1,7 +1,7 @@
 package com.ahmed.simpleBank.controller;
 
 import com.ahmed.simpleBank.business.User;
-import com.ahmed.simpleBank.service.SimpleBankService;
+import com.ahmed.simpleBank.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -13,10 +13,10 @@ import java.util.List;
 
 @RestController
 @RequestMapping
-public class SimpleBankController {
+public class UserController {
 
     @Autowired
-    private SimpleBankService service;
+    private UserService service;
 
     @GetMapping(value = "/ping", produces = MediaType.APPLICATION_JSON_VALUE)
     public String ping() {

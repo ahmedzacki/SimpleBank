@@ -1,7 +1,9 @@
 package com.ahmed.simpleBank.service;
 
 import com.ahmed.simpleBank.business.User;
-import com.ahmed.simpleBank.integration.SimpleBankDao;
+import com.ahmed.simpleBank.integration.UserDao;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -9,10 +11,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-public class SimpleBankService {
+public class UserService {
 
     @Autowired
-    private SimpleBankDao dao;
+    private UserDao dao;
+    @Autowired
+    private Logger logger;
+
 
     public List<User> findAllUsers() {
         List<User> users = new ArrayList<>();

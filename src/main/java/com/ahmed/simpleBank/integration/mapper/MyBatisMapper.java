@@ -6,8 +6,14 @@ import org.apache.ibatis.annotations.Mapper;
 import java.util.List;
 
 @Mapper
-public interface SimpleBankMapper {
+public interface MyBatisMapper {
     List<User> getAllUsers();
 
     void insertUser(User user);
+
+    User getUserById(int userId);
+
+    void updateUser(User user);
+
+    void deleteUser(int userId);
 }
