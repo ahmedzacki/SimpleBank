@@ -15,18 +15,15 @@ public class UserService {
 
     @Autowired
     private UserDao dao;
+
     @Autowired
     private Logger logger;
 
+    // *************** User Methods *************************
 
     public List<User> findAllUsers() {
-        List<User> users = new ArrayList<>();
-
-        try {
-            users = dao.getAllUsers();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        List<User> users = dao.getAllUsers();
+        logger.debug(users.toString());
 
         return users;
     }

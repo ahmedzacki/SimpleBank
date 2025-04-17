@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 
 @RestController
 @RequestMapping
@@ -23,10 +24,13 @@ public class UserController {
         return "SimpleBank web service is alive ata " + LocalDateTime.now();
     }
 
-    @GetMapping(value = "/getAllUsers", produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<User> getAllUsers() {
-        // Fetch all users from the database via the DAO
-        return service.findAllUsers();
+    @GetMapping(value = "/users", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<User>> queryForAllUsers() {
+        // call on the business service for the data
+        List<User> users = service.findAllUsers();
+
+        // Return the response: OK or NoContent
+        return returnNoContentIfEmptyOrNull(users);
     }
 
     // POST endpoint to insert a new user
@@ -40,6 +44,29 @@ public class UserController {
             // Handle any exception that occurs during the user insertion
             return new ResponseEntity<>("Failed to add user", HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+//    @GetMapping("/getUserById")
+//    public ResponseEntity<User> queryForUserById(@RequestParam("id") Long id) {
+//        try {
+//            service.getUserById(id);
+//        } catch (Exception e){
+//            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+//        }
+//    }
+
+    /********************************** Utility Methods **********************************************/
+
+    private <T> ResponseEntity<List<T>> returnNoContentIfEmptyOrNull(List<T> list) {
+        ResponseEntity<List<T>> result;
+
+        if (Objects.isNull(list) || list.isEmpty()) {
+            result = ResponseEntity.noContent().build();
+        }
+        else {
+            result = ResponseEntity.ok(list);
+        }
+        return result;
     }
 
 }
