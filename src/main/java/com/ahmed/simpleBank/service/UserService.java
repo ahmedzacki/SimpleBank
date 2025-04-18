@@ -3,7 +3,6 @@ package com.ahmed.simpleBank.service;
 import com.ahmed.simpleBank.business.User;
 import com.ahmed.simpleBank.integration.UserDao;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -22,7 +21,12 @@ public class UserService {
     // *************** User Methods *************************
 
     public List<User> findAllUsers() {
-        List<User> users = dao.getAllUsers();
+        List<User> users = new ArrayList<>();
+        try {
+            users = dao.getAllUsers();
+        } catch (Exception e) {
+            logger.error(e.getMessage());
+        }
         logger.debug(users.toString());
 
         return users;
