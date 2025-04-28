@@ -34,3 +34,5 @@ CREATE TABLE transaction (
      FOREIGN KEY (from_account_id) REFERENCES account(account_id),
      FOREIGN KEY (to_account_id) REFERENCES account(account_id)
 );
+
+COMMIT;
