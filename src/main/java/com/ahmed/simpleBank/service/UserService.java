@@ -26,9 +26,10 @@ public class UserService {
             users = dao.getAllUsers();
         } catch (Exception e) {
             logger.error(e.getMessage());
+            throw new SimpleBankDatabaseException(e.getMessage());
+
         }
         logger.debug(users.toString());
-
         return users;
     }
 
@@ -37,7 +38,9 @@ public class UserService {
         try {
             dao.insertUser(user);
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.debug(e.getMessage());
+            throw new SimpleBankDatabaseException(e.getMessage());
         }
+        logger.debug(user.toString());
     }
 }
