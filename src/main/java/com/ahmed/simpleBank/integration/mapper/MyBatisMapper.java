@@ -9,7 +9,7 @@ import java.util.List;
 public interface MyBatisMapper {
     List<User> getAllUsers();
 
-    void insertUser(User user);
+    int insertUser(User user);
 
     User getUserById(int userId);
 

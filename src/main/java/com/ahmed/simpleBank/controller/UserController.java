@@ -1,7 +1,7 @@
 package com.ahmed.simpleBank.controller;
 
 import com.ahmed.simpleBank.business.User;
-import com.ahmed.simpleBank.service.UserService;
+import com.ahmed.simpleBank.service.UserServiceImp;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -17,34 +17,31 @@ import java.util.Objects;
 public class UserController {
 
     @Autowired
-    private UserService service;
+    private UserServiceImp service;
 
-    @GetMapping(value = "/ping", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/ping",
+            produces = {MediaType.APPLICATION_JSON_VALUE,
+                    MediaType.APPLICATION_XML_VALUE})
     public String ping() {
         return "SimpleBank web service is alive ata " + LocalDateTime.now();
     }
 
-    @GetMapping(value = "/users", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/users", produces = {MediaType.APPLICATION_JSON_VALUE,
+            MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<List<User>> queryForAllUsers() {
-        // call on the business service for the data
         List<User> users = service.findAllUsers();
-
-        // Return the response: OK or NoContent
         return returnNoContentIfEmptyOrNull(users);
     }
 
     // POST endpoint to insert a new user
-    @PostMapping("/addUser")
-    public ResponseEntity<String> addUser(@RequestBody User user) {
-        try {
-            // Pass the user object to the service layer for insertion
-            service.addUser(user);
-            return new ResponseEntity<>("User added successfully", HttpStatus.CREATED);
-        } catch (Exception e) {
-            // Handle any exception that occurs during the user insertion
-            return new ResponseEntity<>("Failed to add user", HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+    @PostMapping(value = "/users", produces = {MediaType.APPLICATION_JSON_VALUE,
+            MediaType.APPLICATION_XML_VALUE})
+    public ResponseEntity<DatabaseRequestResult> addUser(@RequestBody User user) {
+        validate(user);
+        DatabaseRequestResult result = service.addUser(user);
+        return new ResponseEntity<>(result, HttpStatus.CREATED);
     }
+
 
 //    @GetMapping("/getUserById")
 //    public ResponseEntity<User> queryForUserById(@RequestParam("id") Long id) {
@@ -67,6 +64,20 @@ public class UserController {
             result = ResponseEntity.ok(list);
         }
         return result;
+    }
+
+    private void validate(User user){
+        if (user == null ||
+            isNullOrBlank(user.getFirstName()) ||
+            isNullOrBlank(user.getLastName()) ||
+            isNullOrBlank(user.getEmail()) ||
+            isNullOrBlank(user.getPasswordHash())) {
+            throw new IllegalArgumentException("User is not fully populated");
+        }
+    }
+
+    private boolean isNullOrBlank(String s) {
+        return s == null || s.isBlank();
     }
 
 }

@@ -26,8 +26,8 @@ public class UserDaoMyBatisImpl implements UserDao {
     }
 
     @Override
-    public void insertUser(User user) {
-        mapper.insertUser(user);
+    public int insertUser(User user) {
+        return mapper.insertUser(user);
     }
 
     @Override

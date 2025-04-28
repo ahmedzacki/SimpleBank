@@ -10,7 +10,7 @@ public interface UserDao {
 
     User getUserById(int userId);  // Read User by ID
 
-    void insertUser(User user);  // Create
+    int insertUser(User user);  // Create
 
     void updateUser(User user);  // Update
 
