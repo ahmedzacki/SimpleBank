@@ -1,6 +1,7 @@
 package com.ahmed.simpleBank.controller;
 
 import com.ahmed.simpleBank.business.User;
+import com.ahmed.simpleBank.dto.UserDTO;
 import com.ahmed.simpleBank.service.UserServiceImp;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -11,6 +12,8 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
+
+import static com.ahmed.simpleBank.utils.Validation.validateUserDTO;
 
 @RestController
 @RequestMapping
@@ -36,9 +39,9 @@ public class UserController {
     // POST endpoint to insert a new user
     @PostMapping(value = "/users", produces = {MediaType.APPLICATION_JSON_VALUE,
             MediaType.APPLICATION_XML_VALUE})
-    public ResponseEntity<DatabaseRequestResult> addUser(@RequestBody User user) {
-        validate(user);
-        DatabaseRequestResult result = service.addUser(user);
+    public ResponseEntity<DatabaseRequestResult> createUser(@RequestBody UserDTO userDTO) {
+        validateUserDTO(userDTO);
+        DatabaseRequestResult result = service.addUser(userDTO);
         return new ResponseEntity<>(result, HttpStatus.CREATED);
     }
 
@@ -64,20 +67,6 @@ public class UserController {
             result = ResponseEntity.ok(list);
         }
         return result;
-    }
-
-    private void validate(User user){
-        if (user == null ||
-            isNullOrBlank(user.getFirstName()) ||
-            isNullOrBlank(user.getLastName()) ||
-            isNullOrBlank(user.getEmail()) ||
-            isNullOrBlank(user.getPasswordHash())) {
-            throw new IllegalArgumentException("User is not fully populated");
-        }
-    }
-
-    private boolean isNullOrBlank(String s) {
-        return s == null || s.isBlank();
     }
 
 }

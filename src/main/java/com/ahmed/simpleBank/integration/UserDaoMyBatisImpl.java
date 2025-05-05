@@ -16,8 +16,7 @@ public class UserDaoMyBatisImpl implements UserDao {
 
     @Override
     public List<User> getAllUsers() {
-        List<User> res = mapper.getAllUsers();
-        return res;
+        return mapper.getAllUsers();
     }
 
     @Override

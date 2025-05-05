@@ -1,7 +1,9 @@
 package com.ahmed.simpleBank.service;
 
+import com.ahmed.simpleBank.business.Role;
 import com.ahmed.simpleBank.business.User;
 import com.ahmed.simpleBank.controller.DatabaseRequestResult;
+import com.ahmed.simpleBank.dto.UserDTO;
 import com.ahmed.simpleBank.integration.UserDao;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +17,9 @@ public class UserServiceImp implements UserService {
 
     @Autowired
     private UserDao dao;
+
+    @Autowired
+    private PasswordHashingService passwordHashingService;
 
     @Autowired
     private Logger logger;
@@ -34,19 +39,40 @@ public class UserServiceImp implements UserService {
 
 
     @Override
-    public DatabaseRequestResult addUser(User user) {
+    public DatabaseRequestResult addUser(UserDTO userData) {
         try {
+            String hashedPassword = passwordHashingService.hashPassword(userData.getPassword());
+            // Generate the username from the email (first part before the '@')
+            String username = generateUsernameFromEmail(userData.getEmail());
+            Role role = Role.fromString(userData.getRole());
+
+            User user = new User(
+                    userData.getFirstName(),
+                    userData.getLastName(),
+                    userData.getEmail(),
+                    hashedPassword,
+                    role,
+                    username
+            );
+
             int rowsAffected = dao.insertUser(user);
+
             DatabaseRequestResult result = new DatabaseRequestResult(rowsAffected);
             logger.debug("User inserted successfully, rows affected: {}", rowsAffected);
             return result;
+
         } catch (DuplicateKeyException dke) {
-            logger.error("Duplicate key error while inserting user: {}", user.getEmail(), dke);
+            logger.error("Duplicate key error while inserting user: {}", userData.getEmail(), dke);
             throw new SimpleBankDatabaseException("Duplicate key: " + dke.getMessage(), dke);
         } catch (DataAccessException dae) {
-            logger.error("Database access error while inserting user: {}", user.getEmail(), dae);
+            logger.error("Database access error while inserting user: {}", userData.getEmail(), dae);
             throw new SimpleBankDatabaseException("Database access error: " + dae.getMessage(), dae);
         }
+    }
+
+    // *************** Helper Methods ************************* //
+    private String generateUsernameFromEmail(String email) {
+        return email.split("@")[0];
     }
 
 
