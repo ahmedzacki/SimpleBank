@@ -1,6 +1,10 @@
 package com.ahmed.simpleBank.utils;
 
 import com.ahmed.simpleBank.dto.UserDTO;
+import com.ahmed.simpleBank.exception.InvalidUserException;
+import org.slf4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 public class Validation {
 
@@ -11,8 +15,9 @@ public class Validation {
                 isNullOrBlank(user.getFirstName()) ||
                 isNullOrBlank(user.getLastName()) ||
                 isNullOrBlank(user.getEmail()) ||
-                isNullOrBlank(user.getPassword())) {
-            throw new IllegalArgumentException("User is not fully populated");
+                isNullOrBlank(user.getPassword()) ||
+                !user.getEmail().contains("@")) {
+            throw new InvalidUserException("User is not fully populated");
         }
     }
 

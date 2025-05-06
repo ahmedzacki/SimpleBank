@@ -4,6 +4,8 @@ import com.ahmed.simpleBank.business.Role;
 import com.ahmed.simpleBank.business.User;
 import com.ahmed.simpleBank.controller.DatabaseRequestResult;
 import com.ahmed.simpleBank.dto.UserDTO;
+import com.ahmed.simpleBank.exception.DatabaseException;
+import com.ahmed.simpleBank.exception.DuplicateUserException;
 import com.ahmed.simpleBank.integration.UserDao;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +35,7 @@ public class UserServiceImp implements UserService {
             return users;
         } catch (DataAccessException dae) {
             logger.error("Database access error while retrieving users", dae);
-            throw new SimpleBankDatabaseException("Database access error: " + dae.getMessage(), dae);
+            throw new DatabaseException("Database access error: " + dae.getMessage(), dae);
         }
     }
 
@@ -63,10 +65,12 @@ public class UserServiceImp implements UserService {
 
         } catch (DuplicateKeyException dke) {
             logger.error("Duplicate key error while inserting user: {}", userData.getEmail(), dke);
-            throw new SimpleBankDatabaseException("Duplicate key: " + dke.getMessage(), dke);
+            throw new DuplicateUserException(
+                    "A user with email '" + userData.getEmail() + "' already exists"
+            );
         } catch (DataAccessException dae) {
             logger.error("Database access error while inserting user: {}", userData.getEmail(), dae);
-            throw new SimpleBankDatabaseException("Database access error: " + dae.getMessage(), dae);
+            throw new DatabaseException("Database access error: " + dae.getMessage(), dae);
         }
     }
 

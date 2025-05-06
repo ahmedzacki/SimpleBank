@@ -1,38 +1,49 @@
 package com.ahmed.simpleBank.controller;
 
-import com.ahmed.simpleBank.service.SimpleBankDatabaseException;
-import jakarta.servlet.http.HttpServletRequest;
+import com.ahmed.simpleBank.exception.DuplicateUserException;
+import com.ahmed.simpleBank.exception.InvalidUserException;
+import com.ahmed.simpleBank.exception.DatabaseException;
+import com.ahmed.simpleBank.dto.ErrorResponse;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import org.springframework.web.context.request.WebRequest;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    public static final String DB_ERROR_MSG =
-            "Error communicating with the database";
-
     @Autowired
-    Logger logger;
+    private Logger logger;
 
-    @ExceptionHandler(value = {SimpleBankDatabaseException.class})
-    protected ResponseEntity<Object> handleInvalidDataException(
-            RuntimeException ex, WebRequest request
-    ) {
-        logger.error(DB_ERROR_MSG, ex);
-        return new ResponseEntity<>(DB_ERROR_MSG, HttpStatus.INTERNAL_SERVER_ERROR);
+    @ExceptionHandler(DuplicateUserException.class)
+    public ResponseEntity<ErrorResponse> handleDup(DuplicateUserException ex) {
+        ErrorResponse body = new ErrorResponse("USER_EXISTS", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(body);
     }
 
-    @ResponseStatus(value = HttpStatus.CONFLICT,
-    reason = "Data integrity violation")
-    @ExceptionHandler(value = {DuplicateKeyException.class})
-    public void conflictHandler(DuplicateKeyException ex) {
-        logger.error(DB_ERROR_MSG, ex);
+    @ExceptionHandler(InvalidUserException.class)
+    public ResponseEntity<ErrorResponse> handleInvalid(InvalidUserException ex) {
+        logger.warn(ex.getMessage());
+        ErrorResponse body = new ErrorResponse("INVALID_INPUT", ex.getMessage());
+        return ResponseEntity.badRequest().body(body);
+    }
+
+    @ExceptionHandler(DatabaseException.class)
+    public ResponseEntity<ErrorResponse> handleDatabaseException(DatabaseException ex) {
+        ErrorResponse body = new ErrorResponse(
+                "DATABASE_ERROR",
+                ex.getMessage() != null ? ex.getMessage() : "An unexpected database error occurred"
+        );
+        return ResponseEntity
+                .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(body);
+    }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ErrorResponse> handleAll(Exception ex) {
+        ErrorResponse body = new ErrorResponse("INTERNAL_ERROR", "Something went wrong");
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(body);
     }
 }
