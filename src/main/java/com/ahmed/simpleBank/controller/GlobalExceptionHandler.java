@@ -34,7 +34,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleDatabaseException(DatabaseException ex) {
         ErrorResponse body = new ErrorResponse(
                 "DATABASE_ERROR",
-                ex.getMessage() != null ? ex.getMessage() : "An unexpected database error occurred"
+                ex.getMessage() != null ? ex.getMessage() : "An unexpected database error occurred, please try again"
         );
         return ResponseEntity
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)

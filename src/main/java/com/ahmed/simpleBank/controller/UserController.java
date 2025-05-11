@@ -33,7 +33,7 @@ public class UserController {
             MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<List<User>> queryForAllUsers() {
         List<User> users = service.findAllUsers();
-        return returnNoContentIfEmptyOrNull(users);
+        return ResponseEntity.ok().body(users);
     }
 
     // POST endpoint to insert a new user
@@ -56,17 +56,5 @@ public class UserController {
 //    }
 
     /********************************** Utility Methods **********************************************/
-
-    private <T> ResponseEntity<List<T>> returnNoContentIfEmptyOrNull(List<T> list) {
-        ResponseEntity<List<T>> result;
-
-        if (Objects.isNull(list) || list.isEmpty()) {
-            result = ResponseEntity.noContent().build();
-        }
-        else {
-            result = ResponseEntity.ok(list);
-        }
-        return result;
-    }
 
 }

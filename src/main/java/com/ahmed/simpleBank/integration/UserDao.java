@@ -1,19 +1,19 @@
 package com.ahmed.simpleBank.integration;
 
 import com.ahmed.simpleBank.business.User;
-
 import java.util.List;
+import java.util.UUID;
 
 public interface UserDao {
 
-    List<User> getAllUsers();  // Read All Users
+    List<User> getAllUsers();                // Read All Users
 
-    User getUserById(int userId);  // Read User by ID
+    User getUserById(UUID userId);           // Read User by ID
 
-    int insertUser(User user);  // Create
+    int insertUser(User user);               // Create
 
-    void updateUser(User user);  // Update
+    int updateUser(User user);               // Update
 
-    void deleteUser(int userId);  // Delete
+    int deleteUser(UUID userId);             // Delete
 
 }

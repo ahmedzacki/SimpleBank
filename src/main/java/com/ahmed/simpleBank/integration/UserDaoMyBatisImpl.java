@@ -1,5 +1,5 @@
+// src/main/java/com/ahmed/simpleBank/integration/UserDaoMyBatisImpl.java
 package com.ahmed.simpleBank.integration;
-
 
 import com.ahmed.simpleBank.business.User;
 import com.ahmed.simpleBank.integration.mapper.MyBatisMapper;
@@ -7,12 +7,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.UUID;
 
-@Repository("userDao")
+@Repository
 public class UserDaoMyBatisImpl implements UserDao {
 
+    private final MyBatisMapper mapper;
+
     @Autowired
-    private MyBatisMapper mapper;
+    public UserDaoMyBatisImpl(MyBatisMapper mapper) {
+        this.mapper = mapper;
+    }
 
     @Override
     public List<User> getAllUsers() {
@@ -20,7 +25,7 @@ public class UserDaoMyBatisImpl implements UserDao {
     }
 
     @Override
-    public User getUserById(int userId) {
+    public User getUserById(UUID userId) {
         return mapper.getUserById(userId);
     }
 
@@ -30,12 +35,12 @@ public class UserDaoMyBatisImpl implements UserDao {
     }
 
     @Override
-    public void updateUser(User user) {
-        mapper.updateUser(user);
+    public int updateUser(User user) {
+        return mapper.updateUser(user);
     }
 
     @Override
-    public void deleteUser(int userId) {
-        mapper.deleteUser(userId);
+    public int deleteUser(UUID userId) {
+        return mapper.deleteUser(userId);
     }
 }
