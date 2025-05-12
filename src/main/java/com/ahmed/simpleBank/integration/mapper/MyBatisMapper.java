@@ -16,7 +16,7 @@ public interface MyBatisMapper {
       role, createdAt
     FROM users
   """)
-    List<User> getAllUsers();
+    List<User> queryForGetAllUsers();
 
     @Select("""
     SELECT
@@ -26,8 +26,8 @@ public interface MyBatisMapper {
     FROM users
     WHERE userId = #{userId}
   """)
-        // tell MyBatis the name of this simple parameter
-    User getUserById(@Param("userId") UUID userId);
+        // Tell MyBatis the name of this simple parameter
+    User queryForGetUserById(@Param("userId") UUID userId);
 
     @Insert("""
     INSERT INTO users (
@@ -40,7 +40,7 @@ public interface MyBatisMapper {
       #{role}, #{createdAt}
     )
   """)
-    int insertUser(User user);
+    int queryForInsertUser(User user);
 
     @Update("""
     UPDATE users
@@ -50,14 +50,13 @@ public interface MyBatisMapper {
       email        = #{email},
       username     = #{username},
       passwordHash = #{passwordHash},
-      role         = #{role},
-      createdAt    = #{createdAt}
+      role         = #{role}
     WHERE userId = #{userId}
   """)
-    int updateUser(User user);
+    int queryForUpdateUser(User user);
 
     @Delete("DELETE FROM users WHERE userId = #{userId}")
-    int deleteUser(@Param("userId") UUID userId);
+    int queryForDeleteUserById(@Param("userId") UUID userId);
 }
 
 

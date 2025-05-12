@@ -1,14 +1,36 @@
 package com.ahmed.simpleBank.dto;
 
-import com.ahmed.simpleBank.business.Role;
+import java.util.UUID;
 
 public class UserDTO {
 
+    private UUID userId;
     private String firstName;
     private String lastName;
     private String email;
     private String password;
     private String role;
+
+    // Constructors
+    public UserDTO() {
+    }
+
+    public UserDTO(UUID userId, String firstName, String lastName, String email, String password, String role) {
+        this.userId = userId;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.email = email;
+        this.password = password;
+        this.role = role;
+    }
+
+    public UUID getUserId() {
+        return userId;
+    }
+
+    public void setUserId(UUID userId) {
+        this.userId = userId;
+    }
 
     public String getFirstName() {
         return firstName;
@@ -53,7 +75,8 @@ public class UserDTO {
     @Override
     public String toString() {
         return "UserDTO{" +
-                "firstName='" + firstName + '\'' +
+                "userId=" + userId +
+                ", firstName='" + firstName + '\'' +
                 ", lastName='" + lastName + '\'' +
                 ", email='" + email + '\'' +
                 ", password='" + password + '\'' +

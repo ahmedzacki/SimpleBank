@@ -5,9 +5,13 @@ import com.ahmed.simpleBank.controller.DatabaseRequestResult;
 import com.ahmed.simpleBank.dto.UserDTO;
 
 import java.util.List;
+import java.util.UUID;
 
 public interface UserService {
 
     List<User> findAllUsers();
     DatabaseRequestResult addUser(UserDTO user);
+    User findUserById(UUID id);
+    DatabaseRequestResult deleteUser(UUID id);
+    DatabaseRequestResult updateUser(UserDTO userDTO);
 }
