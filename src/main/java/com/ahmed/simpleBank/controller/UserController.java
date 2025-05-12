@@ -3,7 +3,7 @@ package com.ahmed.simpleBank.controller;
 import com.ahmed.simpleBank.business.User;
 import com.ahmed.simpleBank.dto.UserDTO;
 import com.ahmed.simpleBank.service.UserServiceImp;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.ahmed.simpleBank.utils.Validation;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -11,49 +11,72 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Objects;
+import java.util.UUID;
 
-import static com.ahmed.simpleBank.utils.Validation.validateUserDTO;
+import static com.ahmed.simpleBank.utils.Validation.validateDTOForCreate;
 
 @RestController
-@RequestMapping
+@RequestMapping("/")
 public class UserController {
 
-    @Autowired
-    private UserServiceImp service;
+    private final UserServiceImp service;
 
-    @GetMapping(value = "/ping",
+    public UserController(UserServiceImp service) {
+        this.service = service;
+    }
+
+    @GetMapping(value = "ping",
             produces = {MediaType.APPLICATION_JSON_VALUE,
                     MediaType.APPLICATION_XML_VALUE})
     public String ping() {
         return "SimpleBank web service is alive ata " + LocalDateTime.now();
     }
 
-    @GetMapping(value = "/users", produces = {MediaType.APPLICATION_JSON_VALUE,
+    @GetMapping(value = "users", produces = {MediaType.APPLICATION_JSON_VALUE,
             MediaType.APPLICATION_XML_VALUE})
-    public ResponseEntity<List<User>> queryForAllUsers() {
+    public ResponseEntity<List<User>> getAllUsers() {
         List<User> users = service.findAllUsers();
+        if (users == null || users.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
         return ResponseEntity.ok().body(users);
     }
 
-    // POST endpoint to insert a new user
-    @PostMapping(value = "/users", produces = {MediaType.APPLICATION_JSON_VALUE,
+    @GetMapping(value = "users/{id}",
+            produces = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE })
+    public ResponseEntity<User> getUserById(@PathVariable("id") UUID id) {
+        User user = service.findUserById(id);
+        return ResponseEntity.ok().body(user);
+    }
+
+    @PostMapping(value = "users", produces = {MediaType.APPLICATION_JSON_VALUE,
             MediaType.APPLICATION_XML_VALUE})
-    public ResponseEntity<DatabaseRequestResult> createUser(@RequestBody UserDTO userDTO) {
-        validateUserDTO(userDTO);
+    public ResponseEntity<DatabaseRequestResult> createNew(@RequestBody UserDTO userDTO) {
+        validateDTOForCreate(userDTO);
         DatabaseRequestResult result = service.addUser(userDTO);
         return new ResponseEntity<>(result, HttpStatus.CREATED);
     }
 
+    @PutMapping(value = "users/{id}",
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE })
+    public ResponseEntity<DatabaseRequestResult> updateUser(
+            @PathVariable("id") UUID id,
+            @RequestBody UserDTO userDTO) {
 
-//    @GetMapping("/getUserById")
-//    public ResponseEntity<User> queryForUserById(@RequestParam("id") Long id) {
-//        try {
-//            service.getUserById(id);
-//        } catch (Exception e){
-//            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
-//        }
-//    }
+        userDTO.setUserId(id);  // making sure the DTO knows its id
+        DatabaseRequestResult result = service.updateUser(userDTO);
+
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
+    @DeleteMapping(value = "users/{id}", produces = {MediaType.APPLICATION_JSON_VALUE,
+            MediaType.APPLICATION_XML_VALUE})
+    public ResponseEntity<DatabaseRequestResult> deleteUser(@PathVariable("id") UUID id) {
+        DatabaseRequestResult result = service.deleteUser(id);
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
 
     /********************************** Utility Methods **********************************************/
 

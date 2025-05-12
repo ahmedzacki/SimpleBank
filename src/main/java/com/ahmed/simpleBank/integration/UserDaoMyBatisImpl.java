@@ -21,26 +21,26 @@ public class UserDaoMyBatisImpl implements UserDao {
 
     @Override
     public List<User> getAllUsers() {
-        return mapper.getAllUsers();
+        return mapper.queryForGetAllUsers();
     }
 
     @Override
     public User getUserById(UUID userId) {
-        return mapper.getUserById(userId);
+        return mapper.queryForGetUserById(userId);
     }
 
     @Override
     public int insertUser(User user) {
-        return mapper.insertUser(user);
+        return mapper.queryForInsertUser(user);
     }
 
     @Override
     public int updateUser(User user) {
-        return mapper.updateUser(user);
+        return mapper.queryForUpdateUser(user);
     }
 
     @Override
     public int deleteUser(UUID userId) {
-        return mapper.deleteUser(userId);
+        return mapper.queryForDeleteUserById(userId);
     }
 }

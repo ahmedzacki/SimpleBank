@@ -12,4 +12,12 @@ public class ErrorResponse {
 
     public String getCode() { return code; }
     public String getMessage() { return message; }
+
+    @Override
+    public String toString() {
+        return "ErrorResponse{" +
+                "code='" + code + '\'' +
+                ", message='" + message + '\'' +
+                '}';
+    }
 }
