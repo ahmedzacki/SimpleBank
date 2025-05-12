@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!--The namespace defines the location of the Java interface.
+    The operation names here must match the method names in the interface -->
+
+<mapper namespace="com.ahmed.simpleBank.integration.mapper.MyBatisMapper">
+
+    <!-- Define the resultMap to map snake_case columns to camelCase properties -->
+    <resultMap id="userResultMap" type="com.ahmed.simpleBank.business.User">
+        <result property="userId" column="user_id"/>
+        <result property="firstName" column="first_name"/>
+        <result property="lastName" column="last_name"/>
+        <result property="email" column="email"/>
+        <result property="username" column="username"/>
+        <result property="passwordHash" column="password_hash"/>
+        <result property="role" column="role"/>
+        <result property="createdAt" column="created_at"/>
+    </resultMap>
+
+    <!-- Use the resultMap in the select query -->
+    <select id="getAllUsers" resultMap="userResultMap">
+        SELECT
+            user_id,
+            first_name,
+            last_name,
+            email,
+            username,
+            password_hash,
+            role,
+            created_at
+        FROM user
+    </select>
+
+    <!-- SQL to get a user by ID -->
+    <select id="getUserById" resultType="com.ahmed.simpleBank.business.User">
+        SELECT
+            user_id,
+            first_name,
+            last_name,
+            email,
+            username,
+            password_hash,
+            role,
+            created_at
+        FROM user
+        WHERE user_id = #{userId}
+    </select>
+
+    <!-- Insert query to insert a new user -->
+    <insert id="insertUser" parameterType="com.ahmed.simpleBank.business.User">
+        INSERT INTO user (user_id, first_name, last_name, email, username, password_hash, role, created_at)
+        VALUES (#{userId}, #{firstName}, #{lastName}, #{email}, #{username}, #{passwordHash}, #{role}, #{createdAt});
+    </insert>
+
+    <!-- SQL to update a user -->
+    <update id="updateUser" parameterType="com.ahmed.simpleBank.business.User">
+        UPDATE user
+        SET first_name = #{firstName},
+            last_name = #{lastName},
+            email = #{email},
+            username = #{username},
+            password_hash = #{passwordHash},
+            role = #{role},
+            created_at = #{createdAt}
+        WHERE user_id = #{userId}
+    </update>
+
+    <!-- SQL to delete a user -->
+    <delete id="deleteUser" parameterType="int">
+        DELETE FROM user WHERE user_id = #{userId}
+    </delete>
+
+
+</mapper>

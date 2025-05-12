@@ -26,3 +26,5 @@ VALUES (2, NULL, 300.00, 'Withdrawal');
 -- A transfer between John Doe's accounts
 INSERT INTO transaction (from_account_id, to_account_id, amount, transaction_type)
 VALUES (1, 2, 200.00, 'Transfer');
+
+COMMIT;
