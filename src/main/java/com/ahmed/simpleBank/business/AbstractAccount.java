@@ -2,18 +2,20 @@ package com.ahmed.simpleBank.business;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
+import java.util.UUID;
 
 public abstract class AbstractAccount implements Account {
-    private final int accountId;
-    private final int userId;
-    private final AccountTypeEnum accountType;
-    private final Timestamp createdAt;
+    private Integer accountId;
+    private UUID userId;
+    private Timestamp createdAt;
+
+    /* MyBatis needs to be able to call a no-args constructor on whatever concrete class it instantiates, and then set properties via setters */
+    protected AbstractAccount() { }
 
     // Constructor
-    public AbstractAccount(int accountId, int userId, AccountTypeEnum accountType, Timestamp createdAt) {
+    public AbstractAccount(int accountId, UUID userId, Timestamp createdAt) {
         this.accountId = accountId;
         this.userId = userId;
-        this.accountType = accountType;
         this.createdAt = createdAt;
     }
 
@@ -23,13 +25,8 @@ public abstract class AbstractAccount implements Account {
     }
 
     @Override
-    public int getUserId() {
+    public UUID getUserId() {
         return userId;
-    }
-
-    @Override
-    public AccountTypeEnum getAccountType() {
-        return accountType;
     }
 
     public Timestamp getCreatedAt() {

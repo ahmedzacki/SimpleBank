@@ -2,18 +2,32 @@ package com.ahmed.simpleBank.business;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
+import java.util.UUID;
 
 public class SavingsAccount extends AbstractAccount {
     private BigDecimal balance;
+    private AccountTypeEnum accountType;
 
-    public SavingsAccount(int accountId, int userId, BigDecimal balance, Timestamp createdAt) {
-        super(accountId, userId, AccountTypeEnum.SAVINGS, createdAt); // Pass the AccountTypeEnum value
+    public SavingsAccount() {}
+
+    public SavingsAccount(int accountId, UUID userId, BigDecimal balance, Timestamp createdAt) {
+        super(accountId, userId, createdAt);
         this.balance = balance;
+        this.accountType = AccountTypeEnum.SAVINGS;
+    }
+
+    public SavingsAccount(int accountId, UUID userId, Timestamp createdAt) {
+        super(accountId, userId, createdAt);
+        this.accountType = AccountTypeEnum.SAVINGS;
     }
 
     @Override
     public BigDecimal getBalance() {
         return balance;
+    }
+
+    public AccountTypeEnum getAccountType() {
+        return accountType;
     }
 
     @Override
