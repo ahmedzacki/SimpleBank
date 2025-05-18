@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Mapper
-public interface MyBatisMapper {
+public interface UserMapper {
 
     @Select("""
     SELECT
@@ -57,6 +57,8 @@ public interface MyBatisMapper {
 
     @Delete("DELETE FROM users WHERE userId = #{userId}")
     int queryForDeleteUserById(@Param("userId") UUID userId);
+
+
 }
 
 

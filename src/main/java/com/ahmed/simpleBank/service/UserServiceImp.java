@@ -13,6 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.util.List;
 import java.util.UUID;
 
@@ -42,9 +44,9 @@ public class UserServiceImp implements UserService {
             throw new DatabaseException("Error occurred while accessing database, please try again.", dae);
         }
     }
-
-
+    
     @Override
+    @Transactional
     public DatabaseRequestResult addUser(UserDTO userData) {
         try {
             String hashedPassword = passwordHashingService.hashPassword(userData.getPassword());
@@ -94,6 +96,7 @@ public class UserServiceImp implements UserService {
     }
 
     @Override
+    @Transactional
     public DatabaseRequestResult updateUser(UserDTO userDTO) {
         User existing = dao.getUserById(userDTO.getUserId());
         if (existing == null) {
@@ -137,6 +140,7 @@ public class UserServiceImp implements UserService {
     }
 
     @Override
+    @Transactional
     public DatabaseRequestResult deleteUser(UUID id) {
         try {
             int rowsAffected = dao.deleteUser(id);

@@ -2,7 +2,7 @@
 package com.ahmed.simpleBank.integration;
 
 import com.ahmed.simpleBank.business.User;
-import com.ahmed.simpleBank.integration.mapper.MyBatisMapper;
+import com.ahmed.simpleBank.integration.mapper.UserMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -12,10 +12,10 @@ import java.util.UUID;
 @Repository
 public class UserDaoMyBatisImpl implements UserDao {
 
-    private final MyBatisMapper mapper;
+    private final UserMapper mapper;
 
     @Autowired
-    public UserDaoMyBatisImpl(MyBatisMapper mapper) {
+    public UserDaoMyBatisImpl(UserMapper mapper) {
         this.mapper = mapper;
     }
 

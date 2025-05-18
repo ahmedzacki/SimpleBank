@@ -1,7 +1,7 @@
 package com.ahmed.simpleBank.utils;
 
 import com.ahmed.simpleBank.dto.UserDTO;
-import com.ahmed.simpleBank.exception.InvalidUserException;
+import com.ahmed.simpleBank.exception.InvalidUserInputException;
 
 public class Validation {
 
@@ -15,7 +15,7 @@ public class Validation {
                 isNullOrBlank(user.getPassword()) ||
                 !user.getEmail().contains("@") ||
                 isNullOrBlank(user.getRole())) {
-            throw new InvalidUserException("User is not fully populated");
+            throw new InvalidUserInputException("User is not fully populated");
         }
     }
 
