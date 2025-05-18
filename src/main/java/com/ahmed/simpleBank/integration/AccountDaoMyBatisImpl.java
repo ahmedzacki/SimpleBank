@@ -23,28 +23,28 @@ public class AccountDaoMyBatisImpl implements AccountDao {
     }
 
     @Override
-    public Account getAccountById(int accountId) {
+    public Account getAccountById(UUID accountId) {
         return mapper.queryForGetAccountById(accountId);
     }
 
     @Override
-    public List<Account> getAccountsByUserId(UUID userId) {
-        return mapper.queryForGetAccountsByUserId(userId);
+    public List<Account> getAllAccountsByUserId(UUID userId) {
+        return mapper.queryForGetAllAccountsByUserId(userId);
     }
 
     @Override
-    public int updateBalance(int accountId, BigDecimal balance) {
+    public int updateBalance(UUID accountId, BigDecimal balance) {
         return mapper.queryForUpdateBalance(accountId, balance);
     }
 
     @Override
-    public int deleteAccount(int accountId) {
+    public int deleteAccount(UUID accountId) {
         return mapper.queryForDeleteAccount(accountId);
     }
 
     @Override
-    public Account getAccountByUserIdAndType(UUID userId, String accountType) {
-        return mapper.queryForGetAccountByUserIdAndType(userId, accountType);
+    public List<Account> getAccountsByUserIdAndType(UUID userId, String accountType) {
+        return mapper.queryForGetAccountsByUserIdAndType(userId, accountType);
     }
 
     @Override

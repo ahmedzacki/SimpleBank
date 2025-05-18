@@ -10,15 +10,15 @@ import java.util.UUID;
 public interface AccountDao {
     int createAccount(Account account);
     
-    Account getAccountById(int accountId);
+    Account getAccountById(UUID accountId);
     
-    List<Account> getAccountsByUserId(UUID userId);
+    List<Account> getAllAccountsByUserId(UUID userId);
     
-    int updateBalance(int accountId, BigDecimal balance);
+    int updateBalance(UUID accountId, BigDecimal balance);
     
-    int deleteAccount(int accountId);
+    int deleteAccount(UUID accountId);
     
-    Account getAccountByUserIdAndType(UUID userId, String accountType);
+    List<Account> getAccountsByUserIdAndType(UUID userId, String accountType);
     
     Boolean accountExists(UUID userId, String accountType);
 } 
