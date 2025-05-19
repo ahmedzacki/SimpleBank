@@ -3,7 +3,6 @@ package com.ahmed.simpleBank.controller;
 import com.ahmed.simpleBank.business.User;
 import com.ahmed.simpleBank.dto.UserDTO;
 import com.ahmed.simpleBank.service.UserServiceImp;
-import com.ahmed.simpleBank.utils.Validation;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;

@@ -21,14 +21,18 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(DuplicateUserException.class)
     public ResponseEntity<ErrorResponse> handleDup(DuplicateUserException ex) {
         ErrorResponse body = new ErrorResponse("USER_EXISTS", ex.getMessage());
-        return ResponseEntity.status(HttpStatus.CONFLICT).body(body);
+        return ResponseEntity
+                .status(HttpStatus.CONFLICT)
+                .body(body);
     }
 
-    @ExceptionHandler(InvalidUserException.class)
-    public ResponseEntity<ErrorResponse> handleInvalid(InvalidUserException ex) {
+    @ExceptionHandler(InvalidUserInputException.class)
+    public ResponseEntity<ErrorResponse> handleInvalid(InvalidUserInputException ex) {
         logger.warn(ex.getMessage());
         ErrorResponse body = new ErrorResponse("INVALID_INPUT", ex.getMessage());
-        return ResponseEntity.badRequest().body(body);
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(body);
     }
 
     @ExceptionHandler(DatabaseException.class)
@@ -62,7 +66,9 @@ public class GlobalExceptionHandler {
                     "User ID must be a valid UUID, but got '" + ex.getValue() + "'"
             );
             logger.error("Received INVALID USER ID: '{}'", ex.getValue());
-            return ResponseEntity.badRequest().body(body);
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body(body);
         }
         // for other mismatches, fall through to the generic handler
         throw ex;
@@ -72,17 +78,39 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleEmptyBody(HttpMessageNotReadableException ex) {
         ErrorResponse body = new ErrorResponse(
                 "INVALID_REQUEST",
-                "Request body is missing or malformed JSON"
-        );
+                "Request body is missing or malformed JSON");
         logger.error("Received error: {}", body.toString());
         return ResponseEntity
-                .badRequest()
+                .status(HttpStatus.BAD_REQUEST)
+                .body(body);
+    }
+    
+    @ExceptionHandler(AccountNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleAccountNotFound(AccountNotFoundException ex) {
+        ErrorResponse body = new ErrorResponse(
+                "ACCOUNT_NOT_FOUND_ERROR",
+                ex.getMessage() != null ? ex.getMessage() : "Account not found in the database");
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(body);
+    }
+    
+    @ExceptionHandler(InsufficientFundsException.class)
+    public ResponseEntity<ErrorResponse> handleInsufficientFunds(InsufficientFundsException ex) {
+        ErrorResponse body = new ErrorResponse(
+                "INSUFFICIENT_FUNDS",
+                ex.getMessage()
+        );
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
                 .body(body);
     }
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleAll(Exception ex) {
         ErrorResponse body = new ErrorResponse("INTERNAL_ERROR", "Something went wrong");
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(body);
+        return ResponseEntity
+                .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(body);
     }
 }
