@@ -1,7 +1,6 @@
 package com.ahmed.simpleBank.service;
 
 import com.ahmed.simpleBank.business.Account;
-import com.ahmed.simpleBank.business.AccountImp;
 import com.ahmed.simpleBank.business.AccountTypeEnum;
 import com.ahmed.simpleBank.controller.DatabaseRequestResult;
 import com.ahmed.simpleBank.exception.AccountNotFoundException;
@@ -66,7 +65,7 @@ public class AccountServiceImp implements AccountService {
             }
             
             // Create the account with the unique ID
-            Account account = new AccountImp(accountId, userId, accountType);
+            Account account = new Account(accountId, userId, accountType);
             int rowsAffected = dao.createAccount(account);
             logger.info("Created new {} account for user {}: {}", accountType, userId, accountId);
             return new DatabaseRequestResult(rowsAffected);

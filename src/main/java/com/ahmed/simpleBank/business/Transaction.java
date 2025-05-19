@@ -1,56 +1,58 @@
 package com.ahmed.simpleBank.business;
 
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.Objects;
+import java.util.UUID;
 
 public class Transaction {
 
-    private int transactionId;
-    private Integer fromAccountId;  // Using Integer to allow nulls
-    private Integer toAccountId;    // Using Integer to allow nulls
-    private double amount;
-    private String transactionType;
+    private UUID transactionId;
+    private UUID fromAccountId;
+    private UUID toAccountId;
+    private BigDecimal amount;
+    private TransactionTypeEnum transactionType;
     private Timestamp transactionDate;
 
     // Getters and Setters
 
-    public int getTransactionId() {
+    public UUID getTransactionId() {
         return transactionId;
     }
 
-    public void setTransactionId(int transactionId) {
+    public void setTransactionId(UUID transactionId) {
         this.transactionId = transactionId;
     }
 
-    public Integer getFromAccountId() {
+    public UUID getFromAccountId() {
         return fromAccountId;
     }
 
-    public void setFromAccountId(Integer fromAccountId) {
+    public void setFromAccountId(UUID fromAccountId) {
         this.fromAccountId = fromAccountId;
     }
 
-    public Integer getToAccountId() {
+    public UUID getToAccountId() {
         return toAccountId;
     }
 
-    public void setToAccountId(Integer toAccountId) {
+    public void setToAccountId(UUID toAccountId) {
         this.toAccountId = toAccountId;
     }
 
-    public double getAmount() {
+    public BigDecimal getAmount() {
         return amount;
     }
 
-    public void setAmount(double amount) {
+    public void setAmount(BigDecimal amount) {
         this.amount = amount;
     }
 
-    public String getTransactionType() {
+    public TransactionTypeEnum getTransactionType() {
         return transactionType;
     }
 
-    public void setTransactionType(String transactionType) {
+    public void setTransactionType(TransactionTypeEnum transactionType) {
         this.transactionType = transactionType;
     }
 
@@ -67,7 +69,7 @@ public class Transaction {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Transaction that = (Transaction) o;
-        return transactionId == that.transactionId && Double.compare(amount, that.amount) == 0 && Objects.equals(fromAccountId, that.fromAccountId) && Objects.equals(toAccountId, that.toAccountId) && Objects.equals(transactionType, that.transactionType) && Objects.equals(transactionDate, that.transactionDate);
+        return Objects.equals(transactionId, that.transactionId) && Objects.equals(fromAccountId, that.fromAccountId) && Objects.equals(toAccountId, that.toAccountId) && Objects.equals(amount, that.amount) && transactionType == that.transactionType && Objects.equals(transactionDate, that.transactionDate);
     }
 
     @Override
@@ -82,7 +84,7 @@ public class Transaction {
                 ", fromAccountId=" + fromAccountId +
                 ", toAccountId=" + toAccountId +
                 ", amount=" + amount +
-                ", transactionType='" + transactionType + '\'' +
+                ", transactionType=" + transactionType +
                 ", transactionDate=" + transactionDate +
                 '}';
     }

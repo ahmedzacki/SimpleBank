@@ -4,6 +4,7 @@ import com.ahmed.simpleBank.business.Account;
 import com.ahmed.simpleBank.business.AccountTypeEnum;
 import com.ahmed.simpleBank.dto.AccountOperationDTO;
 import com.ahmed.simpleBank.dto.TransferDTO;
+import com.ahmed.simpleBank.dto.BalanceResponseDTO;
 import com.ahmed.simpleBank.service.AccountService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -31,7 +32,7 @@ public class AccountController {
     public ResponseEntity<DatabaseRequestResult> createAccount(
             @RequestParam UUID userId,
             @RequestParam String accountType) {
-        
+
         AccountTypeEnum type = AccountTypeEnum.fromString(accountType);
         DatabaseRequestResult result = service.createAccount(userId, type);
         return new ResponseEntity<>(result, HttpStatus.CREATED);
@@ -69,9 +70,10 @@ public class AccountController {
     
     @GetMapping(value = "/{accountId}/balance",
             produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
-    public ResponseEntity<BigDecimal> getBalance(@PathVariable UUID accountId) {
+    public ResponseEntity<BalanceResponseDTO> getBalance(@PathVariable UUID accountId) {
         BigDecimal balance = service.getBalance(accountId);
-        return ResponseEntity.ok().body(balance);
+        BalanceResponseDTO response = new BalanceResponseDTO(balance);
+        return ResponseEntity.ok().body(response);
     }
 
     // *************** Account Operation Endpoints *************************
