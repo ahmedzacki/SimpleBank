@@ -26,10 +26,12 @@ public class AccountServiceImp implements AccountService {
 
     private final AccountDao dao;
     private final UserService userService;
+    private final TransactionService transactionService;
 
-    public AccountServiceImp(AccountDao dao, UserService userService) {
+    public AccountServiceImp(AccountDao dao, UserService userService, TransactionService transactionService) {
         this.dao = dao;
         this.userService = userService;
+        this.transactionService = transactionService;
     }
 
     // *************** Account Creation Methods *************************
@@ -156,6 +158,8 @@ public class AccountServiceImp implements AccountService {
             
             int rowsAffected = dao.updateBalance(accountId, newBalance);
             if (rowsAffected > 0) {
+                // Record the deposit transaction in the database
+                transactionService.recordDeposit(accountId, amount);
                 logger.info("Deposited {} to account {}, new balance: {}", amount, accountId, newBalance);
             } else {
                 logger.error("Failed to deposit {} to account {}", amount, accountId);
@@ -191,6 +195,8 @@ public class AccountServiceImp implements AccountService {
             int rowsAffected = dao.updateBalance(accountId, newBalance);
             
             if (rowsAffected > 0) {
+                // Record the withdrawal transaction in the database
+                transactionService.recordWithdrawal(accountId, amount);
                 logger.info("Withdrew {} from account {}, new balance: {}", amount, accountId, newBalance);
             } else {
                 logger.error("Failed to withdraw {} from account {}", amount, accountId);
@@ -250,6 +256,8 @@ public class AccountServiceImp implements AccountService {
                 throw new DatabaseException("Critical error: Money withdrawn but not deposited.");
             }
             
+            // Record the transfer transaction in the database
+            transactionService.recordTransfer(fromAccountId, toAccountId, amount);
             logger.info("Transferred {} from account {} to account {}", amount, fromAccountId, toAccountId);
             
         } catch (DataAccessException dae) {

@@ -99,8 +99,37 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleInsufficientFunds(InsufficientFundsException ex) {
         ErrorResponse body = new ErrorResponse(
                 "INSUFFICIENT_FUNDS",
-                ex.getMessage()
-        );
+                ex.getMessage());
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(body);
+    }
+
+    @ExceptionHandler(InvalidTransactionException.class)
+    public ResponseEntity<ErrorResponse> handleInvalidTransaction(InvalidTransactionException ex) {
+        ErrorResponse body = new ErrorResponse(
+                "INVALID_TRANSACTION",
+                ex.getMessage());
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(body);
+    }
+
+    @ExceptionHandler(InvalidTransactionTypeException.class)
+    public ResponseEntity<ErrorResponse> handleInvalidTransactionType(InvalidTransactionTypeException ex) {
+        ErrorResponse body = new ErrorResponse(
+                "INVALID_TRANSACTION_TYPE",
+                ex.getMessage());
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(body);
+    }
+
+    @ExceptionHandler(InvalidAmountException.class)
+    public ResponseEntity<ErrorResponse> handleInvalidAmount(InvalidAmountException ex) {
+        ErrorResponse body = new ErrorResponse(
+                "INVALID_AMOUNT",   
+                ex.getMessage());
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
                 .body(body);
