@@ -2,6 +2,7 @@ package com.ahmed.simpleBank.controller;
 
 import com.ahmed.simpleBank.business.User;
 import com.ahmed.simpleBank.dto.UserDTO;
+import com.ahmed.simpleBank.service.CommonService;
 import com.ahmed.simpleBank.service.UserServiceImp;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -19,32 +20,31 @@ import static com.ahmed.simpleBank.utils.Validation.validateDTOForCreate;
 public class UserController {
 
     private final UserServiceImp service;
+    private final CommonService commonService;
 
-    public UserController(UserServiceImp service) {
+    public UserController(UserServiceImp service, CommonService commonService) {
         this.service = service;
+        this.commonService = commonService;
     }
 
     @GetMapping(value = "ping",
             produces = {MediaType.APPLICATION_JSON_VALUE,
                     MediaType.APPLICATION_XML_VALUE})
     public String ping() {
-        return "SimpleBank web service is alive ata " + LocalDateTime.now();
+        return "SimpleBank web service is alive at " + LocalDateTime.now();
     }
 
     @GetMapping(value = "users", produces = {MediaType.APPLICATION_JSON_VALUE,
             MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<List<User>> getAllUsers() {
         List<User> users = service.findAllUsers();
-        if (users == null || users.isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        }
         return ResponseEntity.ok().body(users);
     }
 
     @GetMapping(value = "users/{id}",
             produces = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE })
     public ResponseEntity<User> getUserById(@PathVariable("id") UUID id) {
-        User user = service.findUserById(id);
+        User user = commonService.findUserById(id);
         return ResponseEntity.ok().body(user);
     }
 

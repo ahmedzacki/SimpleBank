@@ -1,5 +1,6 @@
 package com.ahmed.simpleBank.service;
 
+import com.ahmed.simpleBank.business.AccountTypeEnum;
 import com.ahmed.simpleBank.business.Role;
 import com.ahmed.simpleBank.business.User;
 import com.ahmed.simpleBank.controller.DatabaseRequestResult;
@@ -26,10 +27,12 @@ public class UserServiceImp implements UserService {
 
     private final UserDao dao;
     private final PasswordHashingService passwordHashingService;
+    private final CommonService commonService;
 
-    public UserServiceImp(UserDao dao, PasswordHashingService passwordHashingService) {
+    public UserServiceImp(UserDao dao, PasswordHashingService passwordHashingService, CommonService commonService) {
         this.dao = dao;
         this.passwordHashingService = passwordHashingService;
+        this.commonService = commonService;
     }
 
     // *************** User Methods *************************
@@ -67,6 +70,9 @@ public class UserServiceImp implements UserService {
 
             DatabaseRequestResult result = new DatabaseRequestResult(rowsAffected);
             logger.debug("User inserted successfully, rows affected: {}", rowsAffected);
+
+            // Create a CHECKING ACCOUNT for user by Default
+            commonService.createAccount(user.getUserId(), AccountTypeEnum.CHECKING);
             return result;
 
         } catch (DuplicateKeyException dke) {
@@ -77,21 +83,6 @@ public class UserServiceImp implements UserService {
         } catch (DataAccessException dae) {
             logger.error("Database access error while inserting user: {}", userData.getEmail(), dae);
             throw new DatabaseException("Database access error: ", dae);
-        }
-    }
-
-    @Override
-    public User findUserById(UUID id) {
-        try {
-            User user = dao.getUserById(id);
-            if (user == null) {
-                throw new UserNotFoundException(id);
-            }
-            logger.debug("Retrieved user: {} from the database", user);
-            return user;
-        } catch (DataAccessException dae) {
-            logger.error("Database access error while retrieving user", dae);
-            throw new DatabaseException("Error occurred while accessing database, please try again.", dae);
         }
     }
 

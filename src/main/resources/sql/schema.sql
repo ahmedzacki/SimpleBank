@@ -1,38 +1,46 @@
-DROP DATABASE SimpleBankDB;
+DROP DATABASE IF EXISTS SimpleBankDB;
 
 CREATE DATABASE SimpleBankDB;
 USE SimpleBankDB;
 
 
-CREATE TABLE user (
-      user_id INT AUTO_INCREMENT PRIMARY KEY,
-      first_name VARCHAR(255) NOT NULL,
-      last_name VARCHAR(255) NOT NULL,
-      email VARCHAR(255) NOT NULL UNIQUE,
-      password_hash VARCHAR(255) NOT NULL,
-      role VARCHAR(50) DEFAULT 'USER',
-      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-
-CREATE TABLE account (
-     account_id INT AUTO_INCREMENT PRIMARY KEY,
-     user_id INT NOT NULL,
-     account_type ENUM('Checking', 'Savings') NOT NULL,
-     balance DECIMAL(10, 2) DEFAULT 0.00,
-     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-     FOREIGN KEY (user_id) REFERENCES user(user_id)
+CREATE TABLE users (
+    userId        CHAR(36)     PRIMARY KEY,
+    firstName     VARCHAR(255) NOT NULL,
+    lastName      VARCHAR(255) NOT NULL,
+    email         VARCHAR(255) NOT NULL UNIQUE,
+    username      VARCHAR(255) NOT NULL UNIQUE,
+    passwordHash  VARCHAR(255) NOT NULL,
+    role          VARCHAR(50)  DEFAULT 'USER',
+    createdAt     DATETIME     DEFAULT CURRENT_TIMESTAMP
 );
 
 
-CREATE TABLE transaction (
-     transaction_id INT AUTO_INCREMENT PRIMARY KEY,
-     from_account_id INT,
-     to_account_id INT,
-     amount DECIMAL(10, 2) NOT NULL,
-     transaction_type ENUM('Deposit', 'Withdrawal', 'Transfer') NOT NULL,
-     transaction_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-     FOREIGN KEY (from_account_id) REFERENCES account(account_id),
-     FOREIGN KEY (to_account_id) REFERENCES account(account_id)
+CREATE TABLE accounts (
+    accountId   CHAR(36)       PRIMARY KEY,                
+    userId      CHAR(36)       NOT NULL,                    
+    accountType VARCHAR(20)    NOT NULL,                      
+    balance     DECIMAL(19,2)  NOT NULL DEFAULT 0.00,       
+    createdAt   DATETIME       NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (userId) REFERENCES users(userId)
 );
+
+
+CREATE TABLE transactions (
+    transaction_id CHAR(36) NOT NULL PRIMARY KEY,
+    from_account_id CHAR(36) NULL,
+    to_account_id CHAR(36) NULL,
+    amount DECIMAL(19, 4) NOT NULL,
+    transaction_type VARCHAR(20) NOT NULL,
+    transaction_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        
+    FOREIGN KEY (from_account_id) REFERENCES accounts(accountId) ON DELETE SET NULL,
+    FOREIGN KEY (to_account_id) REFERENCES accounts(accountId) ON DELETE SET NULL
+);
+
+-- Indexes for better query performance
+CREATE INDEX idx_transactions_from_account ON transactions(from_account_id);
+CREATE INDEX idx_transactions_to_account ON transactions(to_account_id);
+CREATE INDEX idx_transactions_date ON transactions(transaction_date);
 
 COMMIT;

@@ -6,6 +6,8 @@ import com.ahmed.simpleBank.dto.AccountOperationDTO;
 import com.ahmed.simpleBank.dto.TransferDTO;
 import com.ahmed.simpleBank.dto.BalanceResponseDTO;
 import com.ahmed.simpleBank.service.AccountService;
+import com.ahmed.simpleBank.service.CommonService;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -20,9 +22,11 @@ import java.util.UUID;
 public class AccountController {
 
     private final AccountService service;
+    private final CommonService commonService;
 
-    public AccountController(AccountService service) {
+    public AccountController(AccountService service, CommonService commonService) {
         this.service = service;
+        this.commonService = commonService;
     }
 
     // *************** Account Creation Endpoints *************************
@@ -34,7 +38,7 @@ public class AccountController {
             @RequestParam String accountType) {
 
         AccountTypeEnum type = AccountTypeEnum.fromString(accountType);
-        DatabaseRequestResult result = service.createAccount(userId, type);
+        DatabaseRequestResult result = commonService.createAccount(userId, type);
         return new ResponseEntity<>(result, HttpStatus.CREATED);
     }
 

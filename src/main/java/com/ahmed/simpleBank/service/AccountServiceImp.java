@@ -25,62 +25,15 @@ public class AccountServiceImp implements AccountService {
     private Logger logger;
 
     private final AccountDao dao;
-    private final UserService userService;
+    private final CommonService commonService;
     private final TransactionService transactionService;
 
-    public AccountServiceImp(AccountDao dao, UserService userService, TransactionService transactionService) {
+    public AccountServiceImp(AccountDao dao, CommonService commonService, TransactionService transactionService) {
         this.dao = dao;
-        this.userService = userService;
+        this.commonService = commonService;
         this.transactionService = transactionService;
     }
 
-    // *************** Account Creation Methods *************************
-    @Override
-    @Transactional
-    public DatabaseRequestResult createAccount(UUID userId, AccountTypeEnum accountType) {
-        try {
-            // Verify user exists
-            userService.findUserById(userId);
-            
-            // Generate a UUID that doesn't already exist in the database
-            UUID accountId;
-            boolean idExists;
-            int maxAttempts = 5; // Limit retries to prevent infinite loop
-            int attempts = 0;
-            
-            do {
-                accountId = UUID.randomUUID();
-                // Check if this ID already exists
-                Account existingAccount = dao.getAccountById(accountId);
-                idExists = (existingAccount != null);
-                attempts++;
-                
-                if (idExists) {
-                    logger.warn("Generated UUID {} already exists, retrying...", accountId);
-                }
-            } while (idExists && attempts < maxAttempts);
-            
-            if (idExists) {
-                // This is extremely unlikely but we should handle it
-                logger.error("Failed to generate unique account ID after {} attempts", maxAttempts);
-                throw new DatabaseException("Unable to generate unique account ID");
-            }
-            
-            // Create the account with the unique ID
-            Account account = new Account(accountId, userId, accountType);
-            int rowsAffected = dao.createAccount(account);
-            logger.info("Created new {} account for user {}: {}", accountType, userId, accountId);
-            return new DatabaseRequestResult(rowsAffected);
-        } catch (DataAccessException dae) {
-            logger.error("Database error while creating account for user {}", userId, dae);
-            throw new DatabaseException("Error occurred while creating account", dae);
-        } catch (Exception e) {
-            logger.error("Unexpected error while creating account for user {}", userId, e);
-            throw new RuntimeException("An unexpected error occurred while creating account", e);
-        }
-    }
-
-    
     // *************** Account Retrieval Methods *************************
     @Override
     public Account findAccountById(UUID accountId) {
@@ -105,7 +58,7 @@ public class AccountServiceImp implements AccountService {
     public List<Account> findAllAccountsByUserId(UUID userId) {
         try {
             // Verify user exists
-            userService.findUserById(userId);
+            commonService.findUserById(userId);
             
             List<Account> accounts = dao.getAllAccountsByUserId(userId);
             logger.debug("Retrieved {} accounts for user {}", accounts.size(), userId);
@@ -123,7 +76,7 @@ public class AccountServiceImp implements AccountService {
     public List<Account> findAccountsByUserIdAndType(UUID userId, AccountTypeEnum accountType) {
         try {
             // Verify user exists
-            userService.findUserById(userId);
+            commonService.findUserById(userId);
             
             List<Account> accounts = dao.getAccountsByUserIdAndType(userId, accountType.getAccountType());
 
