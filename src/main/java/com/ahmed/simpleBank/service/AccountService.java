@@ -9,9 +9,6 @@ import java.util.List;
 import java.util.UUID;
 
 public interface AccountService {
-    
-    // Account creation
-    DatabaseRequestResult createAccount(UUID userId, AccountTypeEnum accountType);
 
     // Account retrieval
     Account findAccountById(UUID accountId);

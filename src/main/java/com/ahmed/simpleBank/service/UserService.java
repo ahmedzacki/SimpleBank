@@ -11,7 +11,6 @@ public interface UserService {
 
     List<User> findAllUsers();
     DatabaseRequestResult addUser(UserDTO user);
-    User findUserById(UUID id);
     DatabaseRequestResult deleteUser(UUID id);
     DatabaseRequestResult updateUser(UserDTO userDTO);
 }
