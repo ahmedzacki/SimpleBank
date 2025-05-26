@@ -6,7 +6,7 @@ import java.util.UUID;
 import com.ahmed.simpleBank.business.AccountTypeEnum;
 import com.ahmed.simpleBank.business.Transaction;
 import com.ahmed.simpleBank.business.TransactionTypeEnum;
-import com.ahmed.simpleBank.dto.UserDTO;
+import com.ahmed.simpleBank.dto.RegisterUserDTO;
 import com.ahmed.simpleBank.exception.AccountNotFoundException;
 import com.ahmed.simpleBank.exception.InvalidTransactionTypeException;
 import com.ahmed.simpleBank.exception.InvalidAmountException;
@@ -18,7 +18,7 @@ public class Validation {
 
     /********************************** Utility Methods **********************************************/
 
-    public static void validateDTOForCreate(UserDTO user){
+    public static void validateDTOForCreate(RegisterUserDTO user){
         if (user == null ||
                 isNullOrBlank(user.getFirstName()) ||
                 isNullOrBlank(user.getLastName()) ||

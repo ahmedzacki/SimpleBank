@@ -1,6 +1,5 @@
 package com.ahmed.simpleBank.business;
 
-import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.UUID;
@@ -12,64 +11,41 @@ public class User {
     private String lastName;
     private String email;
     private String username;
-    private String passwordHash;
-    private Role role;
+    private String password;
+    private UserRole userRole;
+    private boolean isAccountNonExpired;
+    private boolean isAccountNonLocked;
+    private boolean isCredentialsNonExpired;
+    private boolean isEnabled;
     private LocalDateTime createdAt;
 
-    // Constructors
+    // Constructors 
     public User() {}
 
-    public User(String firstName, String lastName, String email, String passwordHash, Role role, String username) {
-        this.userId = UUID.randomUUID();  // Automatically generate a new UUID for each user
+    public User(String firstName, String lastName, String email, String password, UserRole userRole, String username) {
+        this.userId = UUID.randomUUID();
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
-        this.passwordHash = passwordHash;
-        this.role = role;
+        this.password = password;
+        this.userRole = userRole;
         this.username = username;
+        this.isAccountNonExpired = true;
+        this.isAccountNonLocked = true;
+        this.isCredentialsNonExpired = true;
+        this.isEnabled = true;
         this.createdAt = LocalDateTime.now();
     }
 
     // Getters and Setters
 
-    public Role getRole() {
-        return role;
+
+    public UUID getUserId() {
+        return userId;
     }
 
-    public void setRole(Role role) {
-        this.role = role;
-    }
-
-    public String getPasswordHash() {
-        return passwordHash;
-    }
-
-    public void setPasswordHash(String passwordHash) {
-        this.passwordHash = passwordHash;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
+    public void setUserId(UUID userId) {
+        this.userId = userId;
     }
 
     public String getFirstName() {
@@ -80,25 +56,97 @@ public class User {
         this.firstName = firstName;
     }
 
-    public UUID getUserId() {
-        return userId;
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public UserRole getUserRole() {
+        return userRole;
+    }
+
+    public void setUserRole(UserRole userRole) {
+        this.userRole = userRole;
+    }
+
+    public boolean isAccountNonExpired() {
+        return isAccountNonExpired;
+    }
+
+    public void setAccountNonExpired(boolean accountNonExpired) {
+        isAccountNonExpired = accountNonExpired;
+    }
+
+    public boolean isAccountNonLocked() {
+        return isAccountNonLocked;
+    }
+
+    public void setAccountNonLocked(boolean accountNonLocked) {
+        isAccountNonLocked = accountNonLocked;
+    }
+
+    public boolean isCredentialsNonExpired() {
+        return isCredentialsNonExpired;
+    }
+
+    public void setCredentialsNonExpired(boolean credentialsNonExpired) {
+        isCredentialsNonExpired = credentialsNonExpired;
+    }
+
+    public boolean isEnabled() {
+        return isEnabled;
+    }
+
+    public void setEnabled(boolean enabled) {
+        isEnabled = enabled;
     }
 
     public LocalDateTime getCreatedAt() {
         return createdAt;
     }
 
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        User user = (User) o;
-        return Objects.equals(userId, user.userId) && Objects.equals(firstName, user.firstName) && Objects.equals(lastName, user.lastName) && Objects.equals(email, user.email) && Objects.equals(username, user.username) && Objects.equals(passwordHash, user.passwordHash) && role == user.role && Objects.equals(createdAt, user.createdAt);
+        User that = (User) o;
+        return isAccountNonExpired == that.isAccountNonExpired && isAccountNonLocked == that.isAccountNonLocked && isCredentialsNonExpired == that.isCredentialsNonExpired && isEnabled == that.isEnabled && Objects.equals(userId, that.userId) && Objects.equals(firstName, that.firstName) && Objects.equals(lastName, that.lastName) && Objects.equals(email, that.email) && Objects.equals(username, that.username) && Objects.equals(password, that.password) && userRole == that.userRole && Objects.equals(createdAt, that.createdAt);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(userId, firstName, lastName, email, username, passwordHash, role, createdAt);
+        return Objects.hash(userId, firstName, lastName, email, username, password, userRole, isAccountNonExpired, isAccountNonLocked, isCredentialsNonExpired, isEnabled, createdAt);
     }
 
     @Override
@@ -109,8 +157,12 @@ public class User {
                 ", lastName='" + lastName + '\'' +
                 ", email='" + email + '\'' +
                 ", username='" + username + '\'' +
-                ", passwordHash='" + passwordHash + '\'' +
-                ", role=" + role +
+                ", password='" + password + '\'' +
+                ", userRole=" + userRole +
+                ", isAccountNonExpired=" + isAccountNonExpired +
+                ", isAccountNonLocked=" + isAccountNonLocked +
+                ", isCredentialsNonExpired=" + isCredentialsNonExpired +
+                ", isEnabled=" + isEnabled +
                 ", createdAt=" + createdAt +
                 '}';
     }

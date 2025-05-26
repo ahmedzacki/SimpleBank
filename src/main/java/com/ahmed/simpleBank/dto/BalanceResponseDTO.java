@@ -19,4 +19,11 @@ public class BalanceResponseDTO {
     public void setBalance(BigDecimal balance) {
         this.balance = balance;
     }
+
+    @Override
+    public String toString() {
+        return "BalanceResponseDTO{" +
+                "balance=" + balance +
+                '}';
+    }
 }

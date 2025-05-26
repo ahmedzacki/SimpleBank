@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/accounts")
+@RequestMapping("/v1/api/accounts")
 public class AccountController {
 
     private final AccountService service;
@@ -31,7 +31,7 @@ public class AccountController {
 
     // *************** Account Creation Endpoints *************************
     
-    @PostMapping(value = "",
+    @PostMapping(value = "/",
             produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<DatabaseRequestResult> createAccount(
             @RequestParam UUID userId,

@@ -30,6 +30,11 @@ public class UserDaoMyBatisImpl implements UserDao {
     }
 
     @Override
+    public User getUserByEmail(String email) {
+        return mapper.queryForGetUserByEmail(email);
+    }
+
+    @Override
     public int insertUser(User user) {
         return mapper.queryForInsertUser(user);
     }

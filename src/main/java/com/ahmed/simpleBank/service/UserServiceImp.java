@@ -1,10 +1,8 @@
 package com.ahmed.simpleBank.service;
 
-import com.ahmed.simpleBank.business.AccountTypeEnum;
-import com.ahmed.simpleBank.business.Role;
 import com.ahmed.simpleBank.business.User;
+import com.ahmed.simpleBank.business.UserRole;
 import com.ahmed.simpleBank.controller.DatabaseRequestResult;
-import com.ahmed.simpleBank.dto.UserDTO;
 import com.ahmed.simpleBank.exception.DatabaseException;
 import com.ahmed.simpleBank.exception.DuplicateUserException;
 import com.ahmed.simpleBank.exception.UserNotFoundException;
@@ -13,10 +11,12 @@ import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -26,13 +26,11 @@ public class UserServiceImp implements UserService {
     private Logger logger;
 
     private final UserDao dao;
-    private final PasswordHashingService passwordHashingService;
-    private final CommonService commonService;
+    private final BCryptPasswordEncoder passwordEncoder;
 
-    public UserServiceImp(UserDao dao, PasswordHashingService passwordHashingService, CommonService commonService) {
+    public UserServiceImp(UserDao dao, BCryptPasswordEncoder passwordEncoder) {
         this.dao = dao;
-        this.passwordHashingService = passwordHashingService;
-        this.commonService = commonService;
+        this.passwordEncoder = passwordEncoder;
     }
 
     // *************** User Methods *************************
@@ -47,70 +45,55 @@ public class UserServiceImp implements UserService {
             throw new DatabaseException("Error occurred while accessing database, please try again.", dae);
         }
     }
-    
+
     @Override
-    @Transactional
-    public DatabaseRequestResult addUser(UserDTO userData) {
+    public User findUserById(UUID id) {
         try {
-            String hashedPassword = passwordHashingService.hashPassword(userData.getPassword());
-            // Generate the username from the email (first part before the '@')
-            String username = generateUsernameFromEmail(userData.getEmail());
-            Role role = Role.fromString(userData.getRole());
-
-            User user = new User(
-                    userData.getFirstName(),
-                    userData.getLastName(),
-                    userData.getEmail(),
-                    hashedPassword,
-                    role,
-                    username
-            );
-
-            int rowsAffected = dao.insertUser(user);
-
-            DatabaseRequestResult result = new DatabaseRequestResult(rowsAffected);
-            logger.debug("User inserted successfully, rows affected: {}", rowsAffected);
-
-            // Create a CHECKING ACCOUNT for user by Default
-            commonService.createAccount(user.getUserId(), AccountTypeEnum.CHECKING);
-            return result;
-
-        } catch (DuplicateKeyException dke) {
-            logger.error("Duplicate key error while inserting user: {}", userData.getEmail(), dke);
-            throw new DuplicateUserException(
-                    "A user with email '" + userData.getEmail() + "' already exists", dke
-            );
+            User user = dao.getUserById(id);
+            logger.debug("Retrieved user: {}", user);
+            return user;
         } catch (DataAccessException dae) {
-            logger.error("Database access error while inserting user: {}", userData.getEmail(), dae);
-            throw new DatabaseException("Database access error: ", dae);
+            logger.error("Database access error while retrieving user by id: {}", id, dae);
+            throw new DatabaseException("Error occurred while accessing database, please try again.", dae);
+        }
+    }
+
+    @Override
+    public Optional<User> findUserByEmail(String email) {
+        try {
+            User user = dao.getUserByEmail(email);
+            logger.debug("Retrieved user: {}", user);
+            return Optional.ofNullable(user);
+        } catch (DataAccessException dae) {
+            logger.error("Database access error while retrieving user by email: {}", email, dae);
+            throw new DatabaseException("Error occurred while accessing database, please try again.", dae);
         }
     }
 
     @Override
     @Transactional
-    public DatabaseRequestResult updateUser(UserDTO userDTO) {
-        User existing = dao.getUserById(userDTO.getUserId());
+    public DatabaseRequestResult updateUser(User user) {
+        User existing = dao.getUserById(user.getUserId());
         if (existing == null) {
-            throw new UserNotFoundException(userDTO.getUserId());
+            throw new UserNotFoundException(user.getUserId());
         }
 
         // Merging in changes
-        if (userDTO.getFirstName() != null) {
-            existing.setFirstName(userDTO.getFirstName());
+        if (user.getFirstName() != null) {
+            existing.setFirstName(user.getFirstName());
         }
-        if (userDTO.getLastName() != null) {
-            existing.setLastName(userDTO.getLastName());
+        if (user.getLastName() != null) {
+            existing.setLastName(user.getLastName());
         }
-        if (userDTO.getEmail() != null) {
-            existing.setEmail(userDTO.getEmail());
+        if (user.getEmail() != null) {
+            existing.setEmail(user.getEmail());
         }
-        if (userDTO.getRole() != null) {
-            existing.setRole(Role.fromString(userDTO.getRole()));
+        if (user.getUserRole() != null) {
+            existing.setUserRole(UserRole.valueOf(user.getUserRole().toString()));
         }
-        if (userDTO.getPassword() != null) {
-            // re-hashing only if a new password was provided
-            String hashed = passwordHashingService.hashPassword(userDTO.getPassword());
-            existing.setPasswordHash(hashed);
+        if (user.getPassword() != null) {
+            String hashed = passwordEncoder.encode(user.getPassword());
+            existing.setPassword(hashed);
         }
 
         try {
@@ -123,7 +106,7 @@ public class UserServiceImp implements UserService {
                     "A user with that unique field already exists", dke
             );
         } catch (DataAccessException dae) {
-            logger.error("Database error while updating user {}", userDTO.getUserId(), dae);
+            logger.error("Database error while updating user {}", user.getUserId(), dae);
             throw new DatabaseException(
                     "Error occurred while updating user, please try again.", dae
             );
@@ -146,11 +129,6 @@ public class UserServiceImp implements UserService {
             logger.error("Database access error while deleting user by id: {}", id, dae);
             throw new DatabaseException("Database access error: ", dae);
         }
-    }
-
-    // *************** Helper Methods ************************* //
-    private String generateUsernameFromEmail(String email) {
-        return email.split("@")[0];
     }
 
 

@@ -12,8 +12,8 @@ public interface UserMapper {
     @Select("""
     SELECT
       userId, firstName, lastName,
-      email, username, passwordHash,
-      role, createdAt
+      email, username, password,
+      userRole, isAccountNonExpired, isAccountNonLocked, isCredentialsNonExpired, isEnabled, createdAt
     FROM users
   """)
     List<User> queryForGetAllUsers();
@@ -21,23 +21,33 @@ public interface UserMapper {
     @Select("""
     SELECT
       userId, firstName, lastName,
-      email, username, passwordHash,
-      role, createdAt
+      email, username, password,
+      userRole, isAccountNonExpired, isAccountNonLocked, isCredentialsNonExpired, isEnabled, createdAt
     FROM users
     WHERE userId = #{userId}
   """)
         // Tell MyBatis the name of this simple parameter
     User queryForGetUserById(@Param("userId") UUID userId);
 
+    @Select("""
+    SELECT
+      userId, firstName, lastName,
+      email, username, password,
+      userRole, isAccountNonExpired, isAccountNonLocked, isCredentialsNonExpired, isEnabled, createdAt
+    FROM users
+    WHERE email = #{email}
+  """)
+    User queryForGetUserByEmail(@Param("email") String email);
+
     @Insert("""
     INSERT INTO users (
       userId, firstName, lastName,
-      email, username, passwordHash,
-      role, createdAt
+      email, username, password,
+      userRole, isAccountNonExpired, isAccountNonLocked, isCredentialsNonExpired, isEnabled, createdAt
     ) VALUES (
       #{userId}, #{firstName}, #{lastName},
-      #{email}, #{username}, #{passwordHash},
-      #{role}, #{createdAt}
+      #{email}, #{username}, #{password},
+      #{userRole}, #{isAccountNonExpired}, #{isAccountNonLocked}, #{isCredentialsNonExpired}, #{isEnabled}, #{createdAt}
     )
   """)
     int queryForInsertUser(User user);
@@ -49,8 +59,12 @@ public interface UserMapper {
       lastName     = #{lastName},
       email        = #{email},
       username     = #{username},
-      passwordHash = #{passwordHash},
-      role         = #{role}
+      password     = #{password},
+      userRole         = #{userRole},
+      isAccountNonExpired = #{isAccountNonExpired},
+      isAccountNonLocked = #{isAccountNonLocked},
+      isCredentialsNonExpired = #{isCredentialsNonExpired},
+      isEnabled = #{isEnabled}
     WHERE userId = #{userId}
   """)
     int queryForUpdateUser(User user);

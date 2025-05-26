@@ -19,4 +19,11 @@ public class AccountOperationDTO {
     public void setAmount(BigDecimal amount) {
         this.amount = amount;
     }
+
+    @Override
+    public String toString() {
+        return "AccountOperationDTO{" +
+                "amount=" + amount +
+                '}';
+    }
 }
